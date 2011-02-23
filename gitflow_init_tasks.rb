@@ -13,9 +13,13 @@ create_file 'lib/tasks/init_gitflow.rake' do
           %{git config --get gitflow.prefix.support >/dev/null 2>&1},
           %{git config --get gitflow.prefix.versiontag >/dev/null 2>&1}
         ]
-        unless sh preconditions.join(" && ")
-          puts "Initializing git-flow..."
-          sh %{git flow init -d}
+        sh preconditions.join(" && ") do |ok, res|
+          if ok
+            puts ">>>> git-flow has already been initialized, so skipping"
+          else
+            puts "===> Initializing git-flow with defaults..."
+            sh %{git flow init -d}
+          end
         end
       end
     end
