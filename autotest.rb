@@ -14,7 +14,6 @@ create_file 'lib/tasks/auto.rake' do
     namespace :auto do
       desc 'Runs autotest on cucumber and rspec tests'
       task :test do
-        gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
         ENV['RSPEC'] = 'true'       # allows autotest to discover rspec
         ENV['AUTOTEST'] = 'true'    # allows autotest to run w/ color on linux
         ENV['AUTOFEATURE'] = 'true' # allows autotest to discover cucumber
@@ -24,7 +23,6 @@ create_file 'lib/tasks/auto.rake' do
 
       desc 'Runs autotest on only rspec tests'
       task :spec do
-        gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
         ENV['RSPEC'] = 'true'       # allows autotest to discover rspec
         ENV['AUTOTEST'] = 'true'    # allows autotest to run w/ color on linux
         ENV['AUTOFEATURE'] = 'false' # allows autotest to discover cucumber
@@ -34,7 +32,6 @@ create_file 'lib/tasks/auto.rake' do
 
       desc 'Runs autotest on only cucumber tests'
       task :cucumber do
-        gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
         ENV['RSPEC'] = 'false'       # allows autotest to discover rspec
         ENV['AUTOTEST'] = 'true'    # allows autotest to run w/ color on linux
         ENV['AUTOFEATURE'] = 'true' # allows autotest to discover cucumber
@@ -71,5 +68,23 @@ after_bundler do
       end
     AUTOTEST
   end
-end
 
+  if recipe_list.include? 'cucumber'
+    # Add autotest runner erb opts
+    gsub_file "config/cucumber.yml", /^(std_opts = .*wip")$/, '\1' << <<-'OPTS'.gsub(/^ {6}/, '')
+
+      std_opts += " --tags ~@proposed --color"
+      autotest_opts = "--format pretty --strict --tags ~@proposed --color"
+      autotest_all_opts = "--format #{ENV['CUCUMBER_FORMAT'] || 'progress'} --strict --tags ~@proposed --color #{ENV['CUCUMBER_EXCLUDE']}"
+    OPTS
+
+    # Add autotest runner formats
+    gsub_file "config/cucumber.yml", /^(rerun: .* ~@wip)$/, '\1 --tags ~@proposed' 
+    append_to_file "config/cucumber.yml" do
+      <<-'YAML'.gsub(/^ {8}/, '')
+        autotest: <%= autotest_opts %> features
+        autotest-all: <%= autotest_all_opts %> features
+      YAML
+    end
+  end
+end
