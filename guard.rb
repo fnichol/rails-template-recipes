@@ -14,7 +14,7 @@ gem "guard", :git => "git://github.com/guard/guard.git", :group => :test
 # the alter ego of Guard and will reload Guard when necessary
 gem "guard-ego", :group => :test
 
-if recipe_list.include? 'rspec' || recipe_list.include? 'cucumber'
+if recipe_list.include?('rspec') || recipe_list.include?('cucumber')
   # automatically manage Spork DRb servers
   gem "guard-spork", :group => :test
 end
