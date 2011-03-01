@@ -6,7 +6,7 @@ Select the recipes you would like to include and add some like the following to 
     git_repo = "https://github.com/fnichol/rails-template-recipes"
     @recipe_list = recipes ; def recipe_list; @recipe_list end
     extra_recipes = %w{ rvm git cleanup activerecord_extras
-      cucumber_extras rspec_extras irb application.haml
+      cucumber_extras rspec_extras guard irb application.haml
       flashes_partial.haml flashes_partial.erb
       exclude_database_yaml rake_init_tasks gitflow_init_tasks
       capistrano_lastmile }
