@@ -36,7 +36,7 @@ end
 gem "guard-livereload", :group => :test
 
 create_file 'Guardfile' do
-  <<-'GUARDFILE'.gsub(/^ {2}/, '')
+  <<-'GUARDFILE'.gsub(/^ {4}/, '')
     # More info at https://github.com/guard/guard#readme
 
     guard 'ego' do
@@ -87,12 +87,35 @@ after_bundler do
       spork_opts = "--format rerun --out rerun.txt --strict --tags ~@proposed"
     OPTS
 
-    # Add autotest runner formats
+    # Add spork formats
     gsub_file "config/cucumber.yml", /^(rerun: .* ~@wip)$/, '\1 --tags ~@proposed' 
     append_to_file "config/cucumber.yml" do
       <<-'YAML'.gsub(/^ {8}/, '')
         spork: <%= spork_opts %> features
       YAML
+    end
+  end
+
+  if recipe_list.include? 'rspec'
+    # Add spork support for RSpec
+    gsub_file "spec/spec_helper.rb", /^/, '  '
+    gsub_file "spec/spec_helper.rb", /^  # This file is .*$\n/, ''
+    gsub_file "spec/spec_helper.rb", /^  (ENV\["RAILS_ENV"\].*)$/, 
+        '\1' << <<-'SPEC'.gsub(/^ {6}/, '')
+
+
+      require 'spork'
+
+      Spork.prefox do
+    SPEC
+    append_to_file "spec/spec_helper.rb" do
+      <<-'SPEC'.gsub(/^ {8}/, '')
+        end
+
+        Spork.each_run do
+          # This code will be run each time you run your specs
+        end
+      SPEC
     end
   end
 end
