@@ -94,6 +94,31 @@ after_bundler do
         spork: <%= spork_opts %> features
       YAML
     end
+
+    # Add spork support for Cucumber
+    gsub_file "features/support/env.rb", /^(.+)$/, '  \1'
+    gsub_file "features/support/env.rb", /^  (ENV\["RAILS_ENV"\].*)$/,
+        <<-'ENV'.gsub(/^ {6}/, '') + '  \1'
+      require 'spork'
+
+      Spork.prefork do
+
+    ENV
+    gsub_file "features/support/env.rb", /^  (Capybara.default_selector.*)$/,
+        ' \1' << <<-'ENV'.gsub(/^ {6}/, '')
+
+
+      end
+
+      Spork.each_run do
+    ENV
+    append_to_file "features/support/env.rb" do
+      <<-'THEEND'.gsub(/^ {8}/, '')
+
+        end
+        # the end :)
+      THEEND
+    end
   end
 
   if recipe_list.include? 'rspec'
