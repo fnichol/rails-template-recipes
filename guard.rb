@@ -85,6 +85,19 @@ create_file 'Guardfile' do
   GUARDFILE
 end
 
+create_file "script/guard" do
+  <<-'GUARD'.gsub(/^ {4}/, '')
+    #!/usr/bin/env ruby
+
+    require 'rubygems'
+    require 'bundler'
+    Bundler.setup(:default, :test)
+    require 'guard'
+    load File.join(Gem.loaded_specs['guard'].full_gem_path, 'bin', 'guard')
+  GUARD
+end
+chmod "script/guard", 0755
+
 after_bundler do
   # make Spork reload model classes
   # see: http://www.rubyinside.com/how-to-rails-3-and-rspec-2-4336.html
