@@ -106,7 +106,7 @@ after_bundler do
 
       require 'spork'
 
-      Spork.prefox do
+      Spork.prefork do
     SPEC
     append_to_file "spec/spec_helper.rb" do
       <<-'SPEC'.gsub(/^ {8}/, '')
