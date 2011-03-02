@@ -7,6 +7,8 @@ gem 'growl',      :group => :test
 # http://opinionated-programmer.com/2011/02/profiling-spork-for-faster-start-up-time/
 gem 'spork', '~> 0.9.0.rc', :group => :test
 
+gem 'rspec-instafail', :group => :test
+
 # cli to easily handle events on files modifications
 # git version to make guard-spork and guard-ego play nice, see
 # https://github.com/guard/guard/pull/34
@@ -55,7 +57,7 @@ create_file 'Guardfile' do
       watch('Gemfile')
     end
 
-    guard 'rspec', :cli => "--color --format nested --drb" do
+    guard 'rspec', :cli => "-r rspec/instafail -f RSpec::Instafail --color --drb" do
       watch(%r{^spec/.+_spec\.rb})
       watch(%r{^lib/(.+)\.rb})     { |m| "spec/lib/#{m[1]}_spec.rb" }
       watch('spec/spec_helper.rb') { "spec" }
