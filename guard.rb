@@ -86,6 +86,11 @@ create_file 'Guardfile' do
 end
 
 after_bundler do
+  # make Spork reload model classes
+  # see: http://www.rubyinside.com/how-to-rails-3-and-rspec-2-4336.html
+  gsub_file "config/environments/test.rb",
+    /(config\.cache_clases += +)true/, '\1false'
+
   if recipe_list.include? 'cucumber'
     # Add spork erb opts
     gsub_file "config/cucumber.yml", /^(std_opts = .*wip")$/, '\1' << <<-'OPTS'.gsub(/^ {6}/, '')
