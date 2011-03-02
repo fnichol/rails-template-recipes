@@ -88,7 +88,7 @@ after_bundler do
     OPTS
 
     # Add spork formats
-    gsub_file "config/cucumber.yml", /^(rerun: .* ~@wip)$/, '\1 --tags ~@proposed' 
+    gsub_file "config/cucumber.yml", /^(rerun: .* ~@wip)$/, '\1 --tags ~@proposed'
     append_to_file "config/cucumber.yml" do
       <<-'YAML'.gsub(/^ {8}/, '')
         spork: <%= spork_opts %> features
@@ -100,7 +100,7 @@ after_bundler do
     # Add spork support for RSpec
     gsub_file "spec/spec_helper.rb", /^/, '  '
     gsub_file "spec/spec_helper.rb", /^  # This file is .*$\n/, ''
-    gsub_file "spec/spec_helper.rb", /^  (ENV\["RAILS_ENV"\].*)$/, 
+    gsub_file "spec/spec_helper.rb", /^  (ENV\["RAILS_ENV"\].*)$/,
         '\1' << <<-'SPEC'.gsub(/^ {6}/, '')
 
 
